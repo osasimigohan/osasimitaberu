@@ -26,17 +26,24 @@
       text-align: center;
       font-size: 1.5rem;
     }
-    #coupon-details {
-      font-size: 16px;
-      color: #FF69B4;
-      text-shadow: 1px 1px 0 #FFF;
+    .coupon {
+      background-color: #FFB6C1;
+      border: 3px dashed #FF1493;
+      border-radius: 10px;
+      padding: 20px;
+      width: 80%;
+      max-width: 400px;
       text-align: center;
-      margin-bottom: 20px;
+      color: #FFF;
+      font-size: 1rem;
     }
-    #error {
-      font-size: 14px;
-      color: red;
-      text-align: center;
+    .coupon p {
+      margin: 10px 0;
+    }
+    .used-message {
+      color: #FF69B4;
+      font-size: 1.2rem;
+      margin-top: 20px;
     }
     button {
       margin-top: 20px;
@@ -57,40 +64,42 @@
 </head>
 <body>
   <h1>クーポンページ</h1>
-  <div id="coupon-details">読み込み中...</div>
-  <div id="error"></div>
-  <button id="redeem-button">クーポンを使用する</button>
+  <div id="coupon-container" class="coupon">
+    <p id="coupon-message">クーポンをお使いください！</p>
+    <p id="coupon-details"></p>
+    <button id="use-coupon-button">クーポンを使用する</button>
+  </div>
+  <div id="used-message" class="used-message" style="display: none;">
+    このクーポンはすでに使用済みです。
+  </div>
+
   <script>
+    // URLパラメータからクーポン情報を取得
     const urlParams = new URLSearchParams(window.location.search);
-    const prizeName = urlParams.get('prize');
+    const prize = urlParams.get('prize');
+
+    const couponContainer = document.getElementById('coupon-container');
+    const couponMessage = document.getElementById('coupon-message');
     const couponDetails = document.getElementById('coupon-details');
-    const errorDiv = document.getElementById('error');
-    const redeemButton = document.getElementById('redeem-button');
+    const useCouponButton = document.getElementById('use-coupon-button');
+    const usedMessage = document.getElementById('used-message');
 
-    console.log("URLパラメータ 'prize':", prizeName);
+    // ローカルストレージを使用してクーポンの使用状況を確認
+    const isUsed = localStorage.getItem('couponUsed');
 
-    if (prizeName) {
-      couponDetails.textContent = `${prizeName} のクーポンはこちら！`;
+    if (isUsed) {
+      couponContainer.style.display = 'none';
+      usedMessage.style.display = 'block';
     } else {
-      couponDetails.textContent = "無効なクーポンです。";
-      redeemButton.disabled = true;
+      couponDetails.textContent = `クーポン内容: ${prize}`;
     }
 
-    const couponKey = `coupon_${prizeName}`;
-    console.log("ローカルストレージに保存されたクーポン情報:", localStorage.getItem(couponKey));
-
-    if (localStorage.getItem(couponKey)) {
-      errorDiv.textContent = "このクーポンはすでに使用されています。";
-      redeemButton.disabled = true;
-    }
-
-    redeemButton.addEventListener('click', () => {
-      if (!localStorage.getItem(couponKey)) {
-        localStorage.setItem(couponKey, 'used');
-        couponDetails.textContent = "クーポンを使用しました！ありがとうございます。";
-        redeemButton.disabled = true;
-      } else {
-        errorDiv.textContent = "このクーポンはすでに使用されています。";
+    useCouponButton.addEventListener('click', () => {
+      if (!isUsed) {
+        localStorage.setItem('couponUsed', 'true');
+        couponContainer.style.display = 'none';
+        usedMessage.style.display = 'block';
+        alert('クーポンを使用しました！');
       }
     });
   </script>
