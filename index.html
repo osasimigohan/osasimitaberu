@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>クーポンページ</title>
+  <style>
+    @import url('https://fonts.googleapis.com/earlyaccess/reepokakukana.css');
+
+    body {
+      margin: 0;
+      font-family: 'ReePopKakuKana', sans-serif;
+      background-color: #FFF0F5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    h1 {
+      color: #FF69B4;
+      text-shadow: 2px 2px 0 #FFF;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    #coupon-details {
+      font-size: 16px;
+      color: #FF69B4;
+      text-shadow: 1px 1px 0 #FFF;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #error {
+      font-size: 14px;
+      color: red;
+      text-align: center;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      font-size: 16px;
+      color: #FF69B4;
+      background-color: #FFF;
+      border: 2px solid #FF1493;
+      border-radius: 10px;
+      cursor: pointer;
+      text-shadow: 1px 1px 0 #FFF;
+    }
+    button:hover {
+      background-color: #FF1493;
+      color: #FFF;
+    }
+  </style>
+</head>
+<body>
+  <h1>クーポンページ</h1>
+  <div id="coupon-details">読み込み中...</div>
+  <div id="error"></div>
+  <button id="redeem-button">クーポンを使用する</button>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const prizeName = urlParams.get('prize');
+    const couponDetails = document.getElementById('coupon-details');
+    const errorDiv = document.getElementById('error');
+    const redeemButton = document.getElementById('redeem-button');
+
+    // クーポン情報を表示
+    if (prizeName) {
+      couponDetails.textContent = `${prizeName} のクーポンはこちら！`;
+    } else {
+      couponDetails.textContent = "無効なクーポンです。";
+      redeemButton.disabled = true;
+    }
+
+    // クーポン使用状態を管理するストレージ
+    const couponKey = `coupon_${prizeName}`;
+
+    if (localStorage.getItem(couponKey)) {
+      errorDiv.textContent = "このクーポンはすでに使用されています。";
+      redeemButton.disabled = true;
+    }
+
+    // クーポンを使用する
+    redeemButton.addEventListener('click', () => {
+      if (!localStorage.getItem(couponKey)) {
+        localStorage.setItem(couponKey, 'used');
+        couponDetails.textContent = "クーポンを使用しました！ありがとうございます。";
+        redeemButton.disabled = true;
+      } else {
+        errorDiv.textContent = "このクーポンはすでに使用されています。";
+      }
+    });
+  </script>
+</body>
+</html>
