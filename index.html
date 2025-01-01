@@ -67,7 +67,8 @@
     const errorDiv = document.getElementById('error');
     const redeemButton = document.getElementById('redeem-button');
 
-    // クーポン情報を表示
+    console.log("URLパラメータ 'prize':", prizeName);
+
     if (prizeName) {
       couponDetails.textContent = `${prizeName} のクーポンはこちら！`;
     } else {
@@ -75,15 +76,14 @@
       redeemButton.disabled = true;
     }
 
-    // クーポン使用状態を管理するストレージ
     const couponKey = `coupon_${prizeName}`;
+    console.log("ローカルストレージに保存されたクーポン情報:", localStorage.getItem(couponKey));
 
     if (localStorage.getItem(couponKey)) {
       errorDiv.textContent = "このクーポンはすでに使用されています。";
       redeemButton.disabled = true;
     }
 
-    // クーポンを使用する
     redeemButton.addEventListener('click', () => {
       if (!localStorage.getItem(couponKey)) {
         localStorage.setItem(couponKey, 'used');
